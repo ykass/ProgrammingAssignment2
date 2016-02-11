@@ -1,15 +1,33 @@
-## Put comments here that give an overall description of what your
-## functions do
 
-## Write a short comment describing this function
+## Two functions that provide matrices with the capability to cache their
+## reverse, thereby avoiding its recalculation
+
+## A special caching matrix is created by applying this function to a regular
+## R matrix
 
 makeCacheMatrix <- function(x = matrix()) {
-
+    reverse <- NULL
+    list(
+        set = function (y = matrix()) {
+            x <<- y
+            reverse <<- NULL
+        },
+        get = function () { x },
+        setRev = function (y) { reverse <<- y },
+        getRev = function () { reverse }
+    )
 }
 
 
-## Write a short comment describing this function
+## This function reverses a special caching matrix.  If the reverse is
+## already cached, it does not perform any computation.
+## Precondition: It is assumed that the matrix is invertible.
 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+    reverse <- x$getRev()
+    if (is.null(reverse)) {
+        reverse <- solve(x$get(), ...)
+        x$setRev(reverse)
+    }
+    reverse
 }
